@@ -1,0 +1,105 @@
+# =============================================================================
+# Research Digest Bot — business configuration
+# This file is committed to git. Secrets live in .env, never here.
+# Field shapes are defined in src/research_digest/config/schema.py
+# =============================================================================
+
+# The subject of this digest. Topic-agnostic: change this line (and keywords
+# below) to repurpose the whole pipeline for a different field.
+topic: "cancer immunotherapy and cancer immunology"
+
+timezone: "America/New_York"
+
+# Keyword lists steer ranking and filtering. Start small; iterate after
+# seeing a few real runs.
+focus_keywords:
+  - "CAR-T"
+  - "CAR T"
+  - "checkpoint"
+  - "PD-1"
+  - "PD1"
+  - "PD-L1"
+  - "PDL1"
+  - "tumor microenvironment"
+  - "neoantigen"
+  - "B7"
+  - "translational modification"
+  - "palmitoyl"
+  - "bispecific"
+  - "drug conjugate"
+  - "cancer biology"
+
+include_keywords: []  # empty = no hard include filter
+
+exclude_keywords: []
+
+# --- Flow-control limits ------------------------------------------------------
+limits:
+  lookback_days: 3
+  max_items_per_source: 100
+  max_candidates_total: 300
+  max_digest_items: 8
+
+# --- Deterministic ranking weights (design §25.7) -----------------------------
+ranking:
+  topic_match: 1
+  source_weight: 0.5
+  focus_keyword: 0.8
+  freshness: 0.0
+  llm_relevance: 0.0   # reserved; always 0 in V1
+
+# --- Dedupe thresholds --------------------------------------------------------
+dedupe:
+  content_hash_prefix_chars: 500
+  title_similarity_threshold: 0.85
+
+# --- LLM (OpenRouter, OpenAI-compatible) --------------------------------------
+llm:
+  model: "deepseek/deepseek-v3.2"
+  # test_models: non-empty list enables daily rotation across these models
+  # in production `run`. Leave empty to always use the default `model` above.
+  # The model actually used is printed in the footer of each digest so you
+  # can compare outputs across days/models.
+  # To disable rotation, comment out the list below — falls back to `model` above.
+  test_models:
+    - "deepseek/deepseek-v3.2"
+    - "anthropic/claude-sonnet-4.6"
+    - "openai/gpt-5.4-mini"
+    - "qwen/qwen3.6-plus"
+    - "google/gemini-3.1-flash-lite-preview"
+  base_url: "https://openrouter.ai/api/v1"
+  temperature: 0.3
+  max_output_tokens: 2000
+  request_timeout_seconds: 60.0
+
+# --- Telegram delivery --------------------------------------------------------
+# Bot token lives in .env (TELEGRAM_BOT_TOKEN). Only non-secret config here.
+telegram:
+  chat_ids:
+    - "8513656274"
+    - "6636830168"
+  parse_mode: "HTML"            # HTML lets us use <a href> for clickable links
+  disable_web_page_preview: true
+  base_url: "https://api.telegram.org"
+  request_timeout_seconds: 20.0
+
+# --- Digest output preferences ------------------------------------------------
+output:
+  language: "zh"                              # "en" = no translation; "zh" = translate via translate.md
+  telegram_single_message_soft_limit: 3800    # target length; aim for one message
+  telegram_hard_limit: 4096                   # fixed by Telegram Bot API
+  min_items_floor: 8                          # degradation: stop dropping at this count
+
+# --- History retention --------------------------------------------------------
+retention:
+  history_days: 30
+
+# --- Observability (artifacts + log retention) --------------------------------
+# In production cron mode, flip write_artifacts to false — logs still get
+# written (they're tiny and the only signal when things go wrong), but the
+# per-stage JSON/MD artifacts are skipped. max_runs_kept bounds the disk
+# footprint regardless: after every run we sweep data/artifacts/ and
+# data/logs/ and keep only the N most recent runs by run_id.
+observability:
+  write_artifacts: true
+  max_runs_kept: 20

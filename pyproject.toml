@@ -1,0 +1,48 @@
+[project]
+name = "research-digest-bot"
+version = "0.1.0"
+description = "Research Digest Bot — V1 linear pipeline that fetches, dedupes, ranks, summarizes, and pushes topic-focused content to Telegram."
+requires-python = ">=3.11"
+readme = "README.md"
+
+dependencies = [
+    # --- Config layer ---
+    "pydantic>=2.6",
+    "pydantic-settings>=2.2",
+    "pyyaml>=6.0",
+    # --- Source layer ---
+    "httpx>=0.27",
+    "feedparser>=6.0",
+    "beautifulsoup4>=4.12",
+    # --- Summarization layer (OpenRouter via OpenAI SDK) ---
+    "openai>=1.30",
+    # --- CLI / entrypoint layer ---
+    "typer>=0.12",
+    # --- Utility ---
+    "python-dateutil>=2.9",
+]
+
+[project.scripts]
+digest = "research_digest.entrypoints.cli:main"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+    "respx>=0.21",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/research_digest"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"

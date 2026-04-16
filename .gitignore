@@ -1,0 +1,32 @@
+# --- Secrets ---
+.env
+.env.*
+!.env.example
+
+# --- Local-only design notes (not for publication) ---
+CLAUDE.md
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# --- uv / virtualenv ---
+.venv/
+venv/
+
+# --- Runtime artifacts (per-run logs, debug JSON, local state) ---
+data/logs/
+data/artifacts/
+data/history/
+*.sqlite
+*.sqlite-journal
+
+# --- Editor / OS ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

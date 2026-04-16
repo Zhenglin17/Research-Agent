@@ -1,0 +1,20 @@
+# Research Digest Bot — example crontab entry
+#
+# Install:
+#   crontab -e
+#   (paste the line below, adjust the time if needed, save)
+#
+# Verify:
+#   crontab -l           # confirm the entry is there
+#   grep CRON /var/log/syslog   # check cron fired (after the scheduled time)
+#
+# Logs:
+#   Pipeline logs go to data/logs/run-<id>.log inside the project.
+#   Cron's own stderr (rare — e.g. uv not found) goes to the MAILTO address
+#   or /var/mail/<user>. To redirect cron stderr to a file instead:
+#     0 8 * * * /path/to/run-digest.sh 2>> /path/to/cron-errors.log
+#
+# Time format: minute hour day-of-month month day-of-week command
+# The example below runs every day at 08:00 server local time.
+
+0 8 * * * /home/greyson/projects/agentic/research-agent/scripts/run-digest.sh

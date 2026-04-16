@@ -1,0 +1,145 @@
+# =============================================================================
+# Source registry — which feeds/APIs to pull from.
+# Business config, committed to git. Change topics by editing this file;
+# never hard-code journal names in src/.
+# =============================================================================
+
+sources:
+  # --- RSS / Atom feeds ------------------------------------------------------
+  - id: nature_cancer
+    name: "Nature Cancer"
+    type: rss
+    enabled: true
+    weight: 1.0
+    # Journal feed (not the /subjects/cancer.rss aggregator — that feed
+    # ships <description/> empty, leaving items with title-only summaries
+    # that structurally can't compete with PubMed abstracts in ranking).
+    feed_url: "https://www.nature.com/natcancer.rss"
+
+  - id: nature_immunology
+    name: "Nature Immunology"
+    type: rss
+    enabled: true
+    weight: 1.2
+    feed_url: "https://www.nature.com/ni.rss"
+
+  - id: cancer_cell
+    name: "Cancer Cell"
+    type: rss
+    enabled: true
+    weight: 1.2
+    feed_url: "https://www.cell.com/cancer-cell/current.rss"
+
+  - id: immunity
+    name: "Immunity"
+    type: rss
+    enabled: true
+    weight: 1.0
+    feed_url: "https://www.cell.com/immunity/current.rss"
+
+  - id: nature_reviews_cancer
+    name: "Nature Reviews Cancer"
+    type: rss
+    enabled: true
+    weight: 1.0
+    feed_url: "https://www.nature.com/nrc.rss"
+
+  - id: nature_reviews_immunology
+    name: "Nature Reviews Immunology"
+    type: rss
+    enabled: true
+    weight: 1.0
+    feed_url: "https://www.nature.com/nri.rss"
+
+  - id: science_immunology
+    name: "Science Immunology"
+    type: rss
+    enabled: true
+    weight: 1.2
+    feed_url: "https://www.science.org/action/showFeed?type=etoc&feed=rss&jc=sciimmunol"
+
+  - id: jitc
+    name: "Journal for ImmunoTherapy of Cancer"
+    type: rss
+    enabled: true
+    weight: 0.6
+    feed_url: "https://jitc.bmj.com/rss/current.xml"
+
+  - id: cell_current
+    name: "Cell — Current Issue"
+    type: rss
+    enabled: false  # broad coverage — enable with include_keywords
+    weight: 0.6
+    feed_url: "https://www.cell.com/cell/current.rss"
+
+  # --- PubMed (E-utilities API) ---------------------------------------------
+  # Different shape from RSS: no feed_url. Instead we describe *what to
+  # search* — PubMed returns whatever matches across the whole database.
+  # Items whose efetch response carries a PMCID are flagged
+  # `full_text_accessible=True` (deposited in PubMed Central, openly
+  # readable) and get a 📖 marker in the Telegram output.
+  - id: pubmed_immunotherapy
+    name: "PubMed — cancer immunotherapy search"
+    type: pubmed
+    enabled: true
+    weight: 1.2           # higher trust than generic RSS: results are peer-reviewed
+    query: >
+      (
+        cancer immunotherapy[Title/Abstract] OR
+        immune checkpoint[Title/Abstract] OR
+        CAR-T[Title/Abstract] OR CAR T cell[Title/Abstract] OR
+        neoantigen[Title/Abstract] OR
+        tumor microenvironment[Title/Abstract] OR
+        PD-1[Title/Abstract] OR PD-L1[Title/Abstract] OR
+        "B7 family"[Title/Abstract] OR
+        B7-H3[Title/Abstract] OR B7-H4[Title/Abstract] OR
+        bispecific antibody[Title/Abstract] OR
+        "antibody-drug conjugate"[Title/Abstract] OR
+        palmitoylation[Title/Abstract]
+      )
+      OR
+      (
+        "post-translational modification"[Title/Abstract]
+        AND
+        (cancer[Title/Abstract] OR tumor[Title/Abstract] OR
+         immunotherapy[Title/Abstract] OR immune[Title/Abstract])
+      )
+    max_results: 50        # cap per run; PubMed can return thousands
+    api_key_env: PUBMED_API_KEY   # optional; unset env var → run without key
+    include_abstract: true # drop results without abstracts — LLM needs text
+
+  # --- bioRxiv / medRxiv preprints -----------------------------------------
+  # Open-access preprint server. Every paper here is fetchable in full by
+  # V2's follow-up-question layer → gets a 📖 marker in the digest.
+  # Filter is client-side (API has no search): `categories` narrows by
+  # bioRxiv's own subject tags, `keywords` requires any match in
+  # title/abstract (case-insensitive).
+  - id: biorxiv_cancer_immunology
+    name: "bioRxiv — cancer + immunology preprints"
+    type: biorxiv
+    enabled: true
+    weight: 0.9            # preprints aren't peer-reviewed — slight penalty
+    server: biorxiv
+    categories:
+      - "cancer biology"
+      - "immunology"
+    keywords:
+      - "immunotherapy"
+      - "immune checkpoint"
+      - "CAR-T"
+      - "neoantigen"
+      - "tumor microenvironment"
+      - "PD-1"
+      - "PD-L1"
+      - "B7"
+      - "palmitoylation"
+      - "bispecific"
+      - "antibody-drug conjugate"
+    max_results: 30
+    # Tighter than the global lookback (3d) because bioRxiv has no server-side
+    # search — every extra day is ~180 papers we download and throw away.
+    # 2d = enough to recover from one missed cron run; cross-run SQLite
+    # dedupe handles the overlap with yesterday.
+    lookback_override_days: 2
+    max_pages: 5            # hard cap: never scan more than 500 items
+    timeout_seconds: 60     # bioRxiv API is slow; single page routinely >20s
