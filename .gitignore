@@ -5,6 +5,7 @@
 
 # --- Local-only design notes (not for publication) ---
 CLAUDE.md
+.claude
 
 # --- Python ---
 __pycache__/
