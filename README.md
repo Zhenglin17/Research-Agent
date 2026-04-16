@@ -336,7 +336,7 @@ The architectural hooks are already in place for:
   travels with every entry; V2's fetcher dispatches on `source_type` and uses
   `extra["pmc_url"]` / `extra["doi"]` to pull full text on demand.
 - **Translation model split**: translation is a mechanical operation; latency
-  > quality. V2 may pin translate to a fast model (gpt-5.4-mini is ~10× faster
+  quality matters. V2 may pin translate to a fast model (gpt-5.4-mini is ~10× faster
   than deepseek-v3.2 at translation) while summarization keeps the rotation.
   Also you can set the output language to "en" simply means no translation - 
   very simple.
