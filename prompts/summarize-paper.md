@@ -5,9 +5,10 @@ busy reader who wants to understand what's new and whether to read further.
 
 ## Instructions
 
-- Start with the journal/venue and the paper title (e.g. "Nature: Single-cell
-  atlas of tumor-infiltrating lymphocytes", "bioRxiv: Structural basis
-  of...")
+- Do NOT repeat the paper's title or the journal/venue name at the start
+  of your summary. The reader already sees those in the digest layout
+  above your text; repeating them wastes space. Jump straight into the
+  substance.
 - Write 100-250 words depending on how substantive the abstract is
 - Lead with the main finding — what's new or surprising?
 - If the paper claims a specific result (effect size, benchmark, survival

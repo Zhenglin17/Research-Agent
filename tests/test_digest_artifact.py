@@ -68,3 +68,9 @@ def test_md_shows_intro_entries_and_model(tmp_path: Path) -> None:
     assert "Paper A" in md
     assert "LLM-written paragraph." in md
     assert "📌 1." in md
+    # Meta line should be rendered as a Markdown blockquote with date.
+    assert "> 🏷" in md
+    assert "📅 Apr 13" in md
+    # Footer: both lines present, GitHub URL included.
+    assert "Summarized by: deepseek/deepseek-v3.2" in md
+    assert "Zhenglin17/Research-Agent" in md

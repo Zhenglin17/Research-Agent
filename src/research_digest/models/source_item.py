@@ -31,6 +31,12 @@ class SourceItem(BaseModel):
     id: str = Field(default_factory=lambda: uuid4().hex)
     source_id: str  # matches an entry in sources.yaml
     source_type: SourceType
+    # Human-readable source name for display (e.g. "Nature Cancer",
+    # "Cancer Cell"). Optional — adapters that have a friendly name
+    # from the config pass it; otherwise the renderer falls back to
+    # `source_id` (RSS) or a type-based label like "PubMed" / "bioRxiv".
+    # Kept out of dedupe / ranking logic; display-only.
+    source_name: str | None = None
 
     # Content ----------------------------------------------------------------
     title: str

@@ -5,8 +5,10 @@ and insights without reading the full article.
 
 ## Instructions
 
-- Start with the blog/site name and article title (e.g. "Stratechery: The
-  End of the Beginning", "a16z: Why Software Eats the World 2.0")
+- Do NOT repeat the article's title or the blog/site name at the start
+  of your summary. The reader already sees those in the digest layout
+  above your text; repeating them wastes space. Jump straight into the
+  substance.
 - Write a summary of 100-300 words depending on article length and substance
 - Lead with what matters: the core argument, finding, or announcement
 - If the post introduces a new product, feature, framework, or research

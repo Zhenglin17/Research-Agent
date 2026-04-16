@@ -124,6 +124,7 @@ class RSSSource(Source):
                 SourceItem(
                     source_id=self.source_id,
                     source_type="rss",
+                    source_name=self.name,
                     title=title,
                     summary=summary,
                     content=None,  # RSS rarely carries full text; leave to enrich later
