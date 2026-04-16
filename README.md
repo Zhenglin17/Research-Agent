@@ -10,8 +10,8 @@ brief instead of five tabs of journal RSS feeds.
 **Version 1: complete.** 195 tests passing. Running in production via cron.
 
 Topic is currently configured for cancer immunotherapy/immunology (the initial
-user is a biomedical researcher), but nothing in `src/` assumes biology —
-change `config/*.yaml` and the whole pipeline happily repurposes for any field.
+user that I write for is a biomedical researcher), but nothing in `src/` assumes 
+biology — change `config/*.yaml` and the whole pipeline happily repurposes for any field.
 
 ---
 
@@ -89,7 +89,7 @@ otherwise look arbitrary.
 ### Topic-agnostic by construction
 
 Not a single biomedical term appears in `src/`. All domain knowledge lives in
-`config/*.yaml`. Want to repurpose for AI research? Change `topic:` to
+`config/*.yaml`. For repurposing for AI research just change `topic:` to
 `"LLM inference and AI agents"`, swap the sources for arXiv + a couple
 blogs, rewrite `focus_keywords`. Zero code changes.
 
@@ -132,7 +132,7 @@ the content-driven terms.
 
 Plus cross-run dedupe via a SQLite `digest_history` table — after a push
 succeeds, every entry gets recorded; subsequent runs check here so yesterday's
-top paper doesn't show up again today.
+top paper doesn't show up again today. Also the old history is auto removed.
 
 ### `full_text_accessible` flag — a V1 contract for V2's benefit
 
@@ -224,7 +224,7 @@ phone but not in the log" surprises.
 
 ## Configuration
 
-Two YAML files. Business config only — never secrets.
+Two YAML files. Business config only no private information.
 
 ### `config/settings.yaml`
 
@@ -338,6 +338,8 @@ The architectural hooks are already in place for:
 - **Translation model split**: translation is a mechanical operation; latency
   > quality. V2 may pin translate to a fast model (gpt-5.4-mini is ~10× faster
   than deepseek-v3.2 at translation) while summarization keeps the rotation.
+  Also you can set the output language to "en" simply means no translation - 
+  very simple.
 - **`llm_relevance` score term**: reserved in `RankingWeights` as weight 0.
   Plug in a cheap LLM relevance call and raise the weight.
 
